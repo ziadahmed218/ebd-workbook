@@ -15,6 +15,12 @@
 // Writing it twice is fine; pulling it out into a small function of its own is
 // also fine. Either way, remember it can come back undefined.
 
+// Finds the card whose h3 says `name`. Returns undefined if there is none.
+function findCard(name) {
+  const cards = Array.from(document.querySelectorAll("#list .card"));
+  return cards.find((card) => card.querySelector("h3")?.textContent === name);
+}
+
 /**
  * Adds one product card to the end of the list.
  *
@@ -30,9 +36,18 @@
  * @returns {void}
  */
 export function addProduct(name, price) {
-  // TODO: createElement for each piece, fill them in, append them together,
-  // then append the card to #list. Nothing appears until that last step.
-  throw new Error("addProduct is not written yet");
+  const card = document.createElement("li");
+  card.classList.add("card");
+
+  const title = document.createElement("h3");
+  title.textContent = name;
+
+  const tag = document.createElement("p");
+  tag.classList.add("price");
+  tag.textContent = `${price} EGP`;
+
+  card.append(title, tag);
+  document.querySelector("#list").append(card);
 }
 
 /**
@@ -43,8 +58,10 @@ export function addProduct(name, price) {
  * @returns {void}
  */
 export function removeProduct(name) {
-  // TODO: find the right card, then call .remove() on it.
-  throw new Error("removeProduct is not written yet");
+  const card = findCard(name);
+  if (card) {
+    card.remove();
+  }
 }
 
 /**
@@ -55,8 +72,10 @@ export function removeProduct(name) {
  * @returns {void}
  */
 export function markSoldOut(name) {
-  // TODO: find the card, then classList.add.
-  throw new Error("markSoldOut is not written yet");
+  const card = findCard(name);
+  if (card) {
+    card.classList.add("sold-out");
+  }
 }
 
 /**
@@ -65,29 +84,27 @@ export function markSoldOut(name) {
  * @returns {void}
  */
 export function clearProducts() {
-  // TODO: loop over all the cards and remove each one.
-  throw new Error("clearProducts is not written yet");
+  for (const card of document.querySelectorAll("#list .card")) {
+    card.remove();
+  }
 }
 
 /**
- * Now you write the whole function.
- *
- * Write a function called `wireButtons`.
- *
- *   Parameters: none.
- *   Returns:    nothing.
- *
- * It attaches two click listeners:
- *
+ * Attaches two click listeners:
  *   - clicking #add   adds a card named "Notebook" priced 45
  *   - clicking #reset empties the list
  *
- * Use the functions you wrote above rather than repeating their work.
- *
- * Calling `wireButtons()` twice would attach the listeners twice, so the
- * tests only ever call it once.
- *
- * Remember `export`.
+ * @returns {void}
  */
+export function wireButtons() {
+  document.querySelector("#add").addEventListener("click", () => {
+    addProduct("Notebook", 45);
+  });
 
-// TODO: write wireButtons here.
+  document.querySelector("#reset").addEventListener("click", () => {
+    clearProducts();
+  });
+}
+
+// Hook the buttons up when the page loads, so they work in the browser.
+wireButtons();
